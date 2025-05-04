@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Pressure Tracker</title>
+</head>
+<body>
+    <h2>Enter Blood Pressure Reading</h2>
+    <form method="post">
+        <label>Systolic:</label>
+        <input type="number" name="systolic" required><br>
+        
+        <label>Diastolic:</label>
+        <input type="number" name="diastolic" required><br>
+        
+        <label>Date:</label>
+        <input type="date" name="date" required><br>
+        
+        <button type="submit">Save</button>
+    </form>
+
+    <h2>Previous Readings</h2>
+    <table border="1">
+        <tr>
+            <th>Date</th>
+            <th>Systolic</th>
+            <th>Diastolic</th>
+        </tr>
+        {% for reading in readings %}
+        <tr>
+            <td>{{ reading.date }}</td>
+            <td>{{ reading.systolic }}</td>
+            <td>{{ reading.diastolic }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h2>Blood Pressure Trend</h2>
+<canvas id="bpChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('bpChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [{% for reading in readings %}"{{ reading.date }}",{% endfor %}], 
+            datasets: [
+                {
+                    label: 'Systolic',
+                    borderColor: 'red',
+                    data: [{% for reading in readings %}{{ reading.systolic }},{% endfor %}],
+                    fill: false
+                },
+                {
+                    label: 'Diastolic',
+                    borderColor: 'blue',
+                    data: [{% for reading in readings %}{{ reading.diastolic }},{% endfor %}],
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Blood Pressure (mmHg)'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
